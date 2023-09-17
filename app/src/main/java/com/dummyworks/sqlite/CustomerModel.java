@@ -26,6 +26,7 @@ public class CustomerModel {
                 '}';
     }
 
+
     public int getId() {
         return id;
     }

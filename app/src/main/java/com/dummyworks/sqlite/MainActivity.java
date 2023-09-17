@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,14 +12,16 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
 
     public Button btn_add,btn_viewAll;
     public EditText et_name, et_age;
     public Switch sw_AtiveCustomer;
     public ListView lv_customerList;
+
+    public  ArrayAdapter customerArrayAdapter;
+
+    public DataBaseHelper dataBaseHelper ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +33,11 @@ public class MainActivity extends AppCompatActivity {
         et_name = findViewById(R.id.et_name);
         sw_AtiveCustomer = findViewById(R.id.sw_activeCustomer);
         lv_customerList =  findViewById(R.id.lv_customerList);
+
+
+        dataBaseHelper = new DataBaseHelper(MainActivity.this);
+
+        ShowCustomersOnListView(dataBaseHelper);
 
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,22 +56,39 @@ public class MainActivity extends AppCompatActivity {
                     customerModel =new CustomerModel (-1 , "error", 0 , false);
 
                 }
-                DataBaseHelper dataBaseHelper = new DataBaseHelper(MainActivity.this);
+                
+       //         dataBaseHelper = new DataBaseHelper(MainActivity.this);
                 boolean success = dataBaseHelper.addOne(customerModel);
-           //     Toast.makeText(MainActivity.this, "Success= "+success,Toast.LENGTH_SHORT).show();
-
+                Toast.makeText(MainActivity.this, "Success= "+success,Toast.LENGTH_SHORT).show();
+                ShowCustomersOnListView(dataBaseHelper);
             }
         });
         btn_viewAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DataBaseHelper dataBaseHelper = new DataBaseHelper(MainActivity.this);
-                List<CustomerModel> everyone = dataBaseHelper.getEveryone();
+             //   List<CustomerModel> everyone = dataBaseHelper.getEveryone();
               //  Toast.makeText(MainActivity.this, everyone.toString(),Toast.LENGTH_SHORT).show();
-                ArrayAdapter customerArrayAdapter = new ArrayAdapter<CustomerModel>(MainActivity.this, android.R.layout.simple_list_item_1,everyone);
-                lv_customerList.setAdapter(customerArrayAdapter);
+        //         dataBaseHelper = new DataBaseHelper(MainActivity.this);
 
+                ShowCustomersOnListView(dataBaseHelper);
             }
         });
+
+    lv_customerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            CustomerModel ClickedCustomer = (CustomerModel) parent.getItemAtPosition(position);
+            dataBaseHelper.deleteOne(ClickedCustomer);
+            ShowCustomersOnListView(dataBaseHelper);
+            Toast.makeText(MainActivity.this, "Success= Deleted",Toast.LENGTH_SHORT).show();
+
+        }
+    });
+
+
+    }
+    private void ShowCustomersOnListView(DataBaseHelper dataBaseHelper) {
+        customerArrayAdapter = new ArrayAdapter<CustomerModel>(MainActivity.this, android.R.layout.simple_list_item_1, this.dataBaseHelper.getEveryone());
+        lv_customerList.setAdapter(customerArrayAdapter);
     }
 }
