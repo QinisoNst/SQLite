@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         btn_add = findViewById(R.id.btn_add);
         btn_viewAll = findViewById(R.id.btn_viewall);
-        et_age = findViewById(R.id.et_age);
+        et_age = findViewById(R.id.et_date);
         et_name = findViewById(R.id.et_name);
         sw_AtiveCustomer = findViewById(R.id.sw_activeCustomer);
         lv_customerList =  findViewById(R.id.lv_customerList);
